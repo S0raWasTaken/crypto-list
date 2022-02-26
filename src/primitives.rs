@@ -2,8 +2,11 @@ use std::fmt::{Display, Formatter};
 
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
-pub struct Coin {
+#[derive(Debug, Clone)]
+pub struct Coin(pub CoinSerializer, pub String);
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct CoinSerializer {
     pub id: String,
     pub name: String,
     pub current_price: f64,
@@ -20,7 +23,6 @@ pub struct Coin {
 
 impl Display for Coin {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        let currency = std::env::var("CURRENCY").unwrap();
         write!(
             f,
             "{}:
@@ -35,18 +37,19 @@ impl Display for Coin {
   Circulating Supply: {} {currency}
   All Time High: {} {currency}
   All Time Low: {} {currency}",
-            self.name,
-            self.current_price,
-            self.id,
-            self.symbol,
-            self.market_cap,
-            self.total_volume,
-            self.high_24h,
-            self.low_24h,
-            self.price_change_24h,
-            self.circulating_supply,
-            self.ath,
-            self.atl
+            self.0.name,
+            self.0.current_price,
+            self.0.id,
+            self.0.symbol,
+            self.0.market_cap,
+            self.0.total_volume,
+            self.0.high_24h,
+            self.0.low_24h,
+            self.0.price_change_24h,
+            self.0.circulating_supply,
+            self.0.ath,
+            self.0.atl,
+            currency = self.1,
         )
     }
 }

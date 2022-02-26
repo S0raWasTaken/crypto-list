@@ -1,16 +1,13 @@
 mod primitives;
 
-use std::{
-    env::{set_var, var},
-    fs::read_to_string,
-};
+use std::env::var;
+use std::fs::read_to_string;
 
 use anyhow::{anyhow, Context, Result};
+use primitives::{CoinSerializer, Coin};
 use reqwest::get;
 use rofi::{Rofi, Width};
 use yaml_rust::YamlLoader;
-
-use crate::primitives::Coin;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -24,8 +21,6 @@ async fn main() -> Result<()> {
         .ok_or(anyhow!("config[\"fiat-currency\"] is a None value"))
         .context("No fiat-currency in config file?")?;
 
-    set_var("CURRENCY", comparison_currency);
-
     let coins = config["coins"]
         .as_vec()
         .ok_or(anyhow!("No coins in config file?"))?
@@ -38,12 +33,20 @@ async fn main() -> Result<()> {
         coins.join(",")
     ))
     .await?
-    .json::<Vec<Coin>>()
-    .await?;
+    .json::<Vec<CoinSerializer>>()
+    .await?
+    .iter()
+    .map(|c| Coin(c.clone(), comparison_currency.to_owned()))
+    .collect::<Vec<_>>();
 
     let parsed = currencies
         .iter()
-        .map(|c| format!("{}: {} {comparison_currency}", c.symbol, c.current_price))
+        .map(|c| {
+            format!(
+                "{}: {} {comparison_currency}",
+                c.0.symbol, c.0.current_price
+            )
+        })
         .collect::<Vec<_>>();
 
     if let Ok(element) = Rofi::new(&parsed)

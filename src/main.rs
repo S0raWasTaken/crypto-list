@@ -46,18 +46,15 @@ async fn main() -> Result<()> {
         .map(|c| format!("{}: {} {comparison_currency}", c.symbol, c.current_price))
         .collect::<Vec<_>>();
 
-    match Rofi::new(&parsed)
+    if let Ok(element) = Rofi::new(&parsed)
         .prompt("search")
         .lines(15)
         .width(Width::Pixels(400))?
         .run_index()
     {
-        Ok(element) => {
-            Rofi::new_message(format!("{}", currencies[element]))
-                .run()
-                .ok();
-        }
-        _ => (),
+        Rofi::new_message(format!("{}", currencies[element]))
+            .run()
+            .ok();
     }
 
     Ok(())

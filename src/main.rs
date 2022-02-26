@@ -28,7 +28,7 @@ async fn main() -> Result<()> {
 
     let coins = config["coins"]
         .as_vec()
-        .ok_or(anyhow!(""))?
+        .ok_or(anyhow!("No coins in config file?"))?
         .iter()
         .map(|c| c.as_str().unwrap())
         .collect::<Vec<_>>();

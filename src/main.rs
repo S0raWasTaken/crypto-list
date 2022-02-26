@@ -41,13 +41,10 @@ async fn main() -> Result<()> {
     .json::<Vec<Coin>>()
     .await?;
 
-    let mut parsed = Vec::<String>::new();
-    for coin in &currencies {
-        parsed.push(format!(
-            "{}: {} {comparison_currency}",
-            coin.symbol, coin.current_price
-        ));
-    }
+    let parsed = currencies
+        .iter()
+        .map(|c| format!("{}: {} {comparison_currency}", c.symbol, c.current_price))
+        .collect::<Vec<_>>();
 
     match Rofi::new(&parsed)
         .prompt("search")

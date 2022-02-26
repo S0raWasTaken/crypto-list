@@ -1,0 +1,24 @@
+[package]
+name = "crypto-list"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rofi = "0.3.0"
+yaml-rust = "0.4.5"
+anyhow = "1.0.55"
+serde_json = "1.0.79"
+
+[dependencies.tokio]
+version = "1.17.0"
+features = ["macros", "rt-multi-thread"]
+
+[dependencies.reqwest]
+version = "0.11.9"
+features = ["json"]
+
+[dependencies.serde]
+version = "1.0.136"
+features = ["derive"]
